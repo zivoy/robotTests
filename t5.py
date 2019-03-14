@@ -18,7 +18,7 @@ speed = 200
 while True:
     col = robotFunctions.get_closest_color([cl.value(i) for i in range(3)])
     if col == 'white':
-        move.drive(1, 0, True, speed)
+        move.drive(1, 0, '', speed)
     elif col == 'blue':
         break
     else:
