@@ -59,5 +59,5 @@ class mover:
         self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
         self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
 
-        self.m1.wait_while('running')
-        self.m2.wait_while('running')
+        self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0)
+        self.m2.wait_while('running', timeout=lRot/lSpeed*1000.0)
