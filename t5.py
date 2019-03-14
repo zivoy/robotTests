@@ -16,7 +16,7 @@ speed = 200
 #ar.run_to_abs_pos(position_sp = 0)
 
 while True:
-    col = robotFunctions.get_closest_color(cl.value())
+    col = robotFunctions.get_closest_color([cl.value(i) for i in range(3)])
     if col == 'white':
         move.drive(1, 0, True, speed)
     elif col == 'blue':
