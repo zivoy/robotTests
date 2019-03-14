@@ -37,7 +37,7 @@ class robotHandler:
         self.gy.mode='GYRO-ANG'
 
     def getOrientation(self):
-        return gy.value()
+        return self.gy.value()
 
     def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
         
@@ -106,6 +106,7 @@ class robotHandler:
                     nonPass.append(pos)
         if nonPass != []:
             self.circleNavigate(nonPass)
+        return nonPass
 
     def circleNavigate(self, positions):
         pass
@@ -113,6 +114,7 @@ class robotHandler:
     def getIntoPos(self, final=False):
         self.drive(20, 0, '', 200, True)
         currOr = self.getOrientation()
-        self.drive(0, 180-currOr, 'right', 200, True)
+        endPos = 0 if final else 180
+        self.drive(0, endPos-currOr, 'right', 180, True)
         runAgain = not final
         return runAgain
