@@ -36,6 +36,9 @@ class robotHandler:
         self.gy.mode='GYRO-CAL'
         self.gy.mode='GYRO-ANG'
 
+    def getOrientation(self):
+        return gy.value()
+
     def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
         
         wheel_circum = pi * wheel_diameter * multiplier
@@ -95,14 +98,21 @@ class robotHandler:
         for col, pos in colorRan:
             if get_closest_color(col) != 'white':
                 if get_closest_color(col) == 'green' and (pos == 8 or pos == 9):
-                    return 1
+                    self.getIntoPos()
+                    return
                 else:
                     #return get_closest_color(col)
                     self.stopRunning()
                     nonPass.append(pos)
         if nonPass != []:
             self.circleNavigate(nonPass)
-        return 0
 
     def circleNavigate(self, positions):
         pass
+
+    def getIntoPos(self, final=False):
+        self.drive(20, 0, '', 200, True)
+        currOr = self.getOrientation()
+        self.drive(0, 180-currOr, 'right', 200, True)
+        runAgain = not final
+        return runAgain
