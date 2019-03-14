@@ -1,4 +1,3 @@
-import numpy as np
 from ev3dev import ev3
 
 wheel_diameter = 5.6
@@ -6,15 +5,17 @@ robot_width = 11.6
 
 multiplier = 1.0
 
+def dist(list1, list2):
+    return sum([(vi-vj)**2.0 for vi, vj in zip(list1, list2)])
+
 def get_closest_color(color_measure):
-    colorm = color_measure[:3]
-    colors = {'red': np.array([255, 0, 0]),
-              'green': np.array([0, 255, 0]),
-              'blue': np.array([0, 0, 255]),
-              'grey': np.array([230, 230, 230]),
-              'black': np.array([0, 0, 0]),
-              'white': np.array([255, 255, 255])}
-    distances = [(np.linalg.norm(color - colorm), name) for name, color in colors.items()]
+    colors = {'red': [255, 0, 0],
+              'green': [0, 255, 0],
+              'blue': [0, 0, 255],
+              'grey': [230, 230, 230],
+              'black': [0, 0, 0],
+              'white': [255, 255, 255]}
+    distances = [(dist(color, color_measure), name) for name, color in colors.items()]
     return min(distances)[1]
 
 class mover:
