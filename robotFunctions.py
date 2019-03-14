@@ -25,18 +25,19 @@ class mover:
     def __init__(self, m1, m2):
         self.m1 = ev3.LargeMotor(m1)
         self.m2 = ev3.LargeMotor(m2)
-    def drive(self, float(forward), turnDeg=0, turnDir=True, speed=200):
+    def drive(self, forward, turnDeg=0, turnDir=True, speed=200):
+        
         wheel_circum = pi * wheel_diameter * multiplier
 
         robot_turn_circle = pi * robot_width
 
         wheel_travel_distance = robot_turn_circle * turnDeg / 360.0
 
-        rotation_deg = wheel_travel_distance / wheel_circum * 360
+        rotation_deg = wheel_travel_distance / wheel_circum * 360.0
 
         direction = 1.0 if not turnDir else -1.0
 
-        moveRot = forward / wheel_circum * 360.0
+        moveRot = float(forward) / wheel_circum * 360.0
 
         if turnDir == 'right':
             rRot = rotation_deg + moveRot
