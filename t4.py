@@ -16,6 +16,6 @@ speed = 200
 #ar.run_to_abs_pos(position_sp=0)
 
 while robotFunctions.get_closest_color([cl.value(i) for i in range(3)]) == 'white':
-    move.drive(1, 0, True, speed)
+    move.drive(1, 0, '', speed)
 
 Sound.beep()
