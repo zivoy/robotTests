@@ -16,7 +16,7 @@ start = gy.value()
 
 speed = 200
 
-turnTo = True
+turnTo = 'right'
 
 move.drive(toTravel, toTurn, turnTo, speed)
 
