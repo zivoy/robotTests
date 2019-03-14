@@ -8,6 +8,6 @@ toTravel = 100
 
 speed = 200
 
-move.drive(toTravel, 0, True, speed)
+move.drive(toTravel, 0, '', speed)
 
 Sound.beep()
