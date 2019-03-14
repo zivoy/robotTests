@@ -41,16 +41,22 @@ class mover:
         if turnDir == 'right':
             rRot = rotation_deg + moveRot
             lRot = -rotation_deg + moveRot
+            lSpeed = speed * lRot / rRot
+            rSpeed = speed
         elif turnDir == 'left':
             rRot = -rotation_deg + moveRot
             lRot = rotation_deg + moveRot
+            lSpeed = speed
+            rSpeed = speed * rRot / lRot
         else:            
             rRot = moveRot
             lRot = moveRot
+            lSpeed = speed
+            rSpeed = speed
 
             
-        self.m1.run_to_rel_pos(position_sp=rRot ,speed_sp=speed)
-        self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=speed)
+        self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
+        self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
 
         self.m1.wait_while('running')
         self.m2.wait_while('running')
