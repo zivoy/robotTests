@@ -39,11 +39,18 @@ class mover:
         moveRot = forward / wheel_circum * 360
 
         if turnDir == 'right':
-            rRot = 
-            lRot
+            rRot = rotation_deg + moveRot
+            lRot = -rotation_deg + moveRot
+        elif turnDir == 'left':
+            rRot = -rotation_deg + moveRot
+            lRot = rotation_deg + moveRot
+        else:            
+            rRot = moveRot
+            lRot = moveRot
 
-        self.m1.run_to_rel_pos(position_sp=rotation_deg * direction + moveRot, speed_sp=speed)
-        self.m2.run_to_rel_pos(position_sp=- rotation_deg * direction + moveRot, speed_sp=speed)
+            
+        self.m1.run_to_rel_pos(position_sp=rRot ,speed_sp=speed)
+        self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=speed)
 
         self.m1.wait_while('running')
         self.m2.wait_while('running')
