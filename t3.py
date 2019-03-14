@@ -3,8 +3,8 @@ from ev3dev import ev3
 from ev3dev.ev3 import Sound
 import robotFunctions
 
-toTurn = 90
-toTravel = 20
+toTurn = 360 #90
+toTravel = 200 #20
 
 move = robotFunctions.mover('outA', 'outD')
 
