@@ -1,13 +1,16 @@
 from ev3dev import ev3
 from math import pi
+from time import sleep
 
 wheel_diameter = 5.6
 robot_width = 11.6
 
 multiplier = 1.0
 
+
 def dist(list1, list2):
     return sum([(vi-vj)**2.0 for vi, vj in zip(list1, list2)])
+
 
 def get_closest_color(color_measure):
     colors = {'red': [255, 0, 0],
@@ -21,7 +24,8 @@ def get_closest_color(color_measure):
     print(color)
     return color
 
-class mover:
+
+class robotHandler:
     def __init__(self, m1, m2, ar):
         self.m1 = ev3.LargeMotor(m1)
         self.m2 = ev3.LargeMotor(m2)
@@ -29,9 +33,8 @@ class mover:
         self.cl = ev3.ColorSensor()
         self.cl.mode='RGB-RAW'
         self.gy = ev3.GyroSensor()
-        slef.gy.mode='GYRO-CAL'
+        self.gy.mode='GYRO-CAL'
         self.gy.mode='GYRO-ANG'
-
 
     def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
         
@@ -42,8 +45,6 @@ class mover:
         wheel_travel_distance = robot_turn_circle * turnDeg / 360.0
 
         rotation_deg = wheel_travel_distance / wheel_circum * 360.0
-
-        direction = 1.0 if not turnDir else -1.0
 
         moveRot = float(forward) / wheel_circum * 360.0
 
@@ -63,10 +64,9 @@ class mover:
             lSpeed = speed
             rSpeed = speed
 
-            
         self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
         self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
-	    
+
         comp = 50.0
         if wwr:  
             self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0 - comp)
@@ -80,4 +80,29 @@ class mover:
         return [self.cl.value(i) for i in range(3)]
 
     def scan(self):
-        self.ar.run_to_aps_pos(position_sp=0, speed_sp=100)
+        posCols = []
+        for i in range(0, 171, 10):
+            i -= 85
+            self.ar.run_to_abs_pos(position_sp=i, speed_sp=300)
+            sleep(.04)
+            posCols.append((self.returnColors(), int((i+85)/10)))
+        self.ar.run_to_abs_pos(position_sp=0, speed_sp=900)
+        return posCols
+
+    def scanHandler(self):
+        colorRan = self.scan()
+        nonPass = []
+        for col, pos in colorRan:
+            if get_closest_color(col) != 'white':
+                if get_closest_color(col) == 'green' and (pos == 8 or pos == 9):
+                    return 1
+                else:
+                    #return get_closest_color(col)
+                    self.stopRunning()
+                    nonPass.append(pos)
+        if nonPass != []:
+            self.circleNavigate(nonPass)
+        return 0
+
+    def circleNavigate(self, positions):
+        pass
