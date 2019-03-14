@@ -22,10 +22,18 @@ def get_closest_color(color_measure):
     return color
 
 class mover:
-    def __init__(self, m1, m2):
+    def __init__(self, m1, m2, ar):
         self.m1 = ev3.LargeMotor(m1)
         self.m2 = ev3.LargeMotor(m2)
-    def drive(self, forward, turnDeg=0, turnDir=True, speed=200):
+        self.ar = ev3.MediumMotor(ar)
+        self.cl = ev3.ColorSensor()
+        self.cl.mode='RGB-RAW'
+        self.gy = ev3.GyroSensor()
+        slef.gy.mode='GYRO-CAL'
+        self.gy.mode='GYRO-ANG'
+
+
+    def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
         
         wheel_circum = pi * wheel_diameter * multiplier
 
@@ -58,7 +66,18 @@ class mover:
             
         self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
         self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
-
+	    
         comp = 50.0
-        self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0 - comp)
-        self.m2.wait_while('running', timeout=lRot/lSpeed*1000.0 - comp)
+        if wwr:  
+            self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0 - comp)
+            self.m2.wait_while('running', timeout=lRot/lSpeed*1000.0 - comp)
+
+    def stopRunning(self):
+        self.m1.stop(stop_action="brake")
+        self.m2.stop(stop_action="brake")
+
+    def returnColors(self):
+        return [self.cl.value(i) for i in range(3)]
+
+    def scan(self):
+        self.ar.run_to_aps_pos(position_sp=0, speed_sp=100)
