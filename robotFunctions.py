@@ -41,20 +41,20 @@ class robotHandler:
     def getOrientation(self):
         return self.gy.value()
 
-    def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
+    def drive(self, forward, turn_deg=0, turn_dir='', speed=200, wwr=False):
 
-        wheel_travel_distance = robot_turn_circle * turnDeg / 360.0
+        wheel_travel_distance = robot_turn_circle * turn_deg / 360.0
 
         rotation_deg = wheel_travel_distance / wheel_circum * 360.0
 
         moveRot = float(forward) / wheel_circum * 360.0
 
-        if turnDir == 'right':
+        if turn_dir == 'right':
             rRot = rotation_deg + moveRot
             lRot = -rotation_deg + moveRot
             lSpeed = speed * lRot / rRot
             rSpeed = speed
-        elif turnDir == 'left':
+        elif turn_dir == 'left':
             rRot = -rotation_deg + moveRot
             lRot = rotation_deg + moveRot
             lSpeed = speed
@@ -137,22 +137,25 @@ class robotHandler:
         breakDir = 'left' if dire == 'right' else 'right'
         self.drive(0, 90, breakDir, 150, True)
 
-    def turnAroundSensor(self, dirOverride=''):
-        motorPos = self.ar.position
-        travel = 90.0-motorPos
-        driveComp = robot_turn_circle * travel / 360.0
+    def turnAroundSensor(self, dir_override=''):
+        sensor_pos = self.ar.position
+        print(sensor_pos)
+        travel_degrees = 90.0-sensor_pos
+        print(travel_degrees)
+        drive_compensate = robot_turn_circle * travel_degrees / 360.0
+        print(drive_compensate)
 
-        if motorPos < 0:
+        if sensor_pos < 0:
             direct = ('left', -90)
-        elif motorPos > 0:
+        elif sensor_pos > 0:
             direct = ('right', 90)
 
-        if dirOverride == '':
-            turnSide = direct[0]
+        if dir_override == '':
+            turn_side = direct[0]
         else:
-            turnSide = dirOverride
+            turn_side = dir_override
 
-        self.drive(driveComp, travel, turnSide, 100)
+        self.drive(drive_compensate, travel_degrees, turn_side, 100)
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
 
     def getIntoPos(self, final=False):
