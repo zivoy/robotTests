@@ -14,11 +14,11 @@ def dist(list1, list2):
 
 def get_closest_color(color_measure):
 
-    colors = {'red': [255, 0, 0],
-              'green': [0, 255, 0],
-              'blue': [0, 0, 255],
-              'grey': [230, 230, 230],
-              'black': [0, 0, 0],
+    colors = {'red': [225, 50, 50],
+              'green': [48, 155, 40],
+              'blue': [50, 50, 85],
+              'grey': [220, 220, 220],
+              'black': [20, 20, 20],
               'white': [255, 255, 255]}
     distances = [(dist(color, color_measure), name) for name, color in colors.items()]
     color = min(distances)[1]
@@ -86,20 +86,26 @@ class robotHandler:
 
     def scan(self, turn_speed=300):
         posCols = []
+        retEnd = True
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l*10, speed_sp=turn_speed)
             sleep(.04)
-            posCols.append((self.returnColors(), l))
-        self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
-        self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
+            colRet = get_closest_color((self.returnColors()))
+            posCols.append(colRet, l)
+            if colRet == 'red' or colRet == 'blue':
+                break
+                retEnd = False
+        if retEnd:
+            self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
+            self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
         return posCols
 
     def scanHandler(self):
         colorRan = self.scan()
         nonPass = []
         for col, pos in colorRan:
-            if get_closest_color(col) != 'white':
-                if get_closest_color(col) == 'green' and (pos == 8 or pos == 9):
+            if col != 'white' or col != 'gray':
+                if col == 'green' and pos == 0:
                     self.getIntoPos()
                     return
                 else:
@@ -112,6 +118,8 @@ class robotHandler:
 
     def circleNavigate(self, positions):
         pass
+
+    def
 
     def getIntoPos(self, final=False):
         self.drive(20, 0, '', 200, True)
