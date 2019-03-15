@@ -117,25 +117,29 @@ class robotHandler:
         startRot = self.getOrientation()
         self.drive(-2)
         wheelArm = 40 #fix pos of arm guess 40
-        dir = ''
+        dire = ''
         if self.ar.position > 0: #on left
-            dir = 'right'
+            dire = 'right'
             self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
         else:
-            dir = 'left'
+            dire = 'left'
             self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
-        self.drive(0, 10, dir)
+        self.drive(0, 10, dire)
 
         while abs(self.getOrientation()-startRot)<90:
             currCol = get_closest_color(self.returnColors())
             if currCol == 'blue':
                 self.drive(4, speed=100)
             if currCol == 'white':
-                self.drive(0, 3, dir, 100)
+                self.drive(0, 3, dire, 100)
+
+        self.drive(-4, 0, '', 200, True)
+        breakDir = 'left' if dire == 'right' else 'right'
+        self.drive(0, 90, breakDir, 150, True)
 
     def turnAroundSensor(self, dirOverride=''):
         motorPos = self.ar.position
-        travel = 90-motorPos
+        travel = 90.0-motorPos
         driveComp = robot_turn_circle * travel / 360.0
 
         if motorPos < 0:
