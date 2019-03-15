@@ -64,7 +64,7 @@ class robotHandler:
             lRot = moveRot
             lSpeed = speed
             rSpeed = speed
-
+        print('r', rRot, 'l', lRot)
         self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
         self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
 
@@ -140,7 +140,7 @@ class robotHandler:
     def turnAroundSensor(self, dir_override=''):
         sensor_pos = self.ar.position
         print(sensor_pos)
-        travel_degrees = 90.0-sensor_pos
+        travel_degrees = 90.0-abs(sensor_pos)
         print(travel_degrees)
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         print(drive_compensate)
