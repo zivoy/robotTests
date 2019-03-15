@@ -102,15 +102,15 @@ class robotHandler:
         nonPass = []
         for col, pos in colorRan:
             if col != 'white' or col != 'gray':
-                if col == 'green' and pos == 0:
+                '''if col == 'green' and pos == 0:
                     self.getIntoPos()
                     return
-                else:
+                else:'''
                     #return get_closest_color(col)
-                    self.stopRunning()
-                    nonPass.append(pos)
+                self.stopRunning()
+                nonPass.append(pos)
         if nonPass != []:
-            self.circleNavigate(nonPass)
+            self.circleNavigate()
         return nonPass
 
     def circleNavigate(self):
@@ -130,7 +130,7 @@ class robotHandler:
             currCol = get_closest_color(self.returnColors())
             if currCol == 'blue':
                 self.drive(4, speed=100)
-            if currCol == 'white':
+            if currCol == 'white' or currCol == 'gray':
                 self.drive(0, 3, dire, 100)
 
         self.drive(-4, 0, '', 200, True)
