@@ -100,6 +100,7 @@ class robotHandler:
     def scanHandler(self):
         colorRan = self.scan()
         nonPass = []
+        greens = []
         for col, pos in colorRan:
             if col != 'white' or col != 'gray':
                 '''if col == 'green' and pos == 0:
@@ -107,43 +108,56 @@ class robotHandler:
                     return
                 else:'''
                     #return get_closest_color(col)
-                self.stopRunning()
-                nonPass.append(pos)
+                if col == 'green':
+                    #TODO: color handler
+                    greens.append((pos, col))
+                else:
+                    self.stopRunning()
+                    nonPass.append(pos)
+                    break
         if nonPass != []:
-            self.circleNavigate()
-        return nonPass
+            return 'circle', nonPass
+        elif greens!=[]:
+            return 'green', greens
+        else:
+            return 'clear', colorRan
 
     def circleNavigate(self):
         startRot = self.getOrientation()
-        self.drive(-2)
-        wheelArm = 40 #fix pos of arm guess 40
-        dire = ''
+        #self.drive(-2)
+        #wheelArm = 85 #fix pos of arm guess 40
+        #dire = ''
         if self.ar.position > 0: #on left
             dire = 'right'
-            self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
+            #self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
         else:
             dire = 'left'
-            self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
-        self.drive(0, 10, dire)
+            #self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
+        #self.drive(0, 10, dire)
+        self.turnAroundSensor()
+
+        while get_closest_color(self.returnColors())!= 'blue':
+            self.drive(2, speed=50)
 
         while abs(self.getOrientation()-startRot)<90:
             currCol = get_closest_color(self.returnColors())
             if currCol == 'blue':
-                self.drive(4, speed=100)
+                self.drive(4, speed=100, wwr=True)
             if currCol == 'white' or currCol == 'gray':
-                self.drive(0, 3, dire, 100)
+                self.drive(0, 3, dire, 100, True)
 
-        self.drive(-4, 0, '', 200, True)
+        self.stopRunning()
+        self.drive(-6, 0, '', 200, True)
         breakDir = 'left' if dire == 'right' else 'right'
         self.drive(0, 90, breakDir, 150, True)
 
     def turnAroundSensor(self, dir_override=''):
         sensor_pos = self.ar.position
         print(sensor_pos)
-        travel_degrees = 90.0-abs(sensor_pos)
-        print(travel_degrees)
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         print(drive_compensate)
+        travel_degrees = 90.0-abs(sensor_pos)*.85#multiplyer
+        print(travel_degrees)
 
         if sensor_pos < 0:
             direct = ('left', -90)

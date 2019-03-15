@@ -1,0 +1,28 @@
+{A -> 1/(-1. - (1. Sin)/Cot)
+     0.5 (21.3 + 10.2 Cos + 6.5/Cot - (380. Cos)/Cot + 6.5/Sin - (
+      380. Cos)/Sin + (21.3 Sin)/Cot -
+      1. \[Sqrt]((-21.3 - 10.2 Cos - 6.5/Cot + (380. Cos)/Cot - 6.5/
+            Sin + (380. Cos)/Sin - (21.3 Sin)/Cot)^2 -
+          4. (-1. - (1. Sin)/Cot) (-217.26 Cos + 9.5 oq Sin)))}
+
+{A ->
+    1/(-1. - (1. Sin)/Cot)
+     0.5 (21.3 + 10.2 Cos + 6.5/Cot - (380. Cos)/Cot + 6.5/Sin - (
+      380. Cos)/Sin + (21.3 Sin)/
+      Cot + \[Sqrt]((-21.3 - 10.2 Cos - 6.5/Cot + (380. Cos)/Cot -
+           6.5/Sin + (380. Cos)/Sin - (21.3 Sin)/Cot)^2 -
+         4. (-1. - (1. Sin)/Cot) (-217.26 Cos + 9.5 oq Sin)))}
+
+
+
+
+
+
+
+
+{A = 1/(-1. - (1. Sin)/Cot)
+     0.5 (21.3 + 10.2 Cos + 6.5/Cot - (380. Cos)/Cot + 6.5/Sin - (
+      380. Cos)/Sin + (21.3 Sin)/
+      Cot + \[Sqrt]((-21.3 - 10.2 Cos - 6.5/Cot + (380. Cos)/Cot -
+           6.5/Sin + (380. Cos)/Sin - (21.3 Sin)/Cot)^2 -
+         4. (-1. - (1. Sin)/Cot) (-217.26 Cos + 9.5 sin(VAR))))}
