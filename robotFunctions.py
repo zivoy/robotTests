@@ -84,13 +84,12 @@ class robotHandler:
 
     def scan(self, turn_speed=300):
         posCols = []
-        for i in range(0, 171, 10):
-            i -= 85
-            self.ar.run_to_abs_pos(position_sp=i, speed_sp=turn_speed)
+        for l in range(-8, 9):
+            self.ar.run_to_abs_pos(position_sp=l*10, speed_sp=turn_speed)
             sleep(.04)
-            posCols.append((self.returnColors(), int((i+85)/10)))
-        self.ar.run_to_abs_pos(position_sp=0, speed_sp=900)
-        self.ar.run_to_abs_pos(position_sp=0, speed_sp=100)
+            posCols.append((self.returnColors(), l))
+        self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
+        self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
         return posCols
 
     def scanHandler(self):
