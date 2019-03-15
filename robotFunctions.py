@@ -119,14 +119,14 @@ class robotHandler:
     def turnAroundSensor(self, dirOverride=''):
         motorPos = self.ar.position()
         travel = 90-motorPos
-        driveComp = 2 * robot_turn_circle * travel / wheel_circum
+        driveComp = robot_turn_circle * travel / 360.0
 
         if motorPos > 0:
             direct = ('left', 90)
         elif motorPos < 0:
             direct = ('right', -90)
 
-        if dirOverride != '':
+        if dirOverride == '':
             turnSide = direct[0]
         else:
             turnSide = dirOverride
