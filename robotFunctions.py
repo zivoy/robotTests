@@ -13,6 +13,7 @@ def dist(list1, list2):
 
 
 def get_closest_color(color_measure):
+
     colors = {'red': [255, 0, 0],
               'green': [0, 255, 0],
               'blue': [0, 0, 255],
@@ -80,7 +81,8 @@ class robotHandler:
         self.m2.stop(stop_action="brake")
 
     def returnColors(self):
-        return [self.cl.value(i) for i in range(3)]
+        scale = [345.0, 324.0, 214.0]
+        return [255.0 / s * self.cl.value(i) for i, s in enumerate(scale)]
 
     def scan(self, turn_speed=300):
         posCols = []
