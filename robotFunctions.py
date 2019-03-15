@@ -5,8 +5,9 @@ from time import sleep
 wheel_diameter = 5.6
 robot_width = 11.6
 
-multiplier = 1.0
 
+wheel_circum = pi * wheel_diameter
+robot_turn_circle = pi * robot_width
 
 def dist(list1, list2):
     return sum([(vi-vj)**2.0 for vi, vj in zip(list1, list2)])
@@ -41,10 +42,6 @@ class robotHandler:
         return self.gy.value()
 
     def drive(self, forward, turnDeg=0, turnDir='', speed=200, wwr=False):
-        
-        wheel_circum = pi * wheel_diameter * multiplier
-
-        robot_turn_circle = pi * robot_width
 
         wheel_travel_distance = robot_turn_circle * turnDeg / 360.0
 
@@ -62,7 +59,7 @@ class robotHandler:
             lRot = rotation_deg + moveRot
             lSpeed = speed
             rSpeed = speed * rRot / lRot
-        else:            
+        else:
             rRot = moveRot
             lRot = moveRot
             lSpeed = speed
@@ -72,7 +69,7 @@ class robotHandler:
         self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
 
         comp = 50.0
-        if wwr:  
+        if wwr:
             self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0 - comp)
             self.m2.wait_while('running', timeout=lRot/lSpeed*1000.0 - comp)
 
@@ -93,8 +90,8 @@ class robotHandler:
             colRet = get_closest_color((self.returnColors()))
             posCols.append(colRet, l)
             if colRet == 'red' or colRet == 'blue':
-                break
                 retEnd = False
+                break
         if retEnd:
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
@@ -119,7 +116,23 @@ class robotHandler:
     def circleNavigate(self, positions):
         pass
 
-    def
+    def turnAroundSensor(self, dirOverride=''):
+        motorPos = self.ar.position()
+        travel = 90-motorPos
+        driveComp = 2 * robot_turn_circle * travel / wheel_circum
+
+        if motorPos > 0:
+            direct = ('left', 90)
+        elif motorPos < 0:
+            direct = ('right', -90)
+
+        if dirOverride != '':
+            turnSide = direct[0]
+        else:
+            turnSide = dirOverride
+
+        self.drive(driveComp, travel, turnSide, 100)
+        self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=100)
 
     def getIntoPos(self, final=False):
         self.drive(20, 0, '', 200, True)
