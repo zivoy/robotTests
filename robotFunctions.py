@@ -140,7 +140,7 @@ class robotHandler:
     def turnAroundSensor(self, dir_override=''):
         sensor_pos = self.ar.position
         print(sensor_pos)
-        travel_degrees = 90.0-sensor_pos
+        travel_degrees = 90.0-abs(sensor_pos)
         print(travel_degrees)
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         print(drive_compensate)
