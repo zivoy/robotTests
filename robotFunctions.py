@@ -82,14 +82,15 @@ class robotHandler:
     def returnColors(self):
         return [self.cl.value(i) for i in range(3)]
 
-    def scan(self):
+    def scan(self, turn_speed=300):
         posCols = []
         for i in range(0, 171, 10):
             i -= 85
-            self.ar.run_to_abs_pos(position_sp=i, speed_sp=300)
+            self.ar.run_to_abs_pos(position_sp=i, speed_sp=turn_speed)
             sleep(.04)
             posCols.append((self.returnColors(), int((i+85)/10)))
         self.ar.run_to_abs_pos(position_sp=0, speed_sp=900)
+        self.ar.run_to_abs_pos(position_sp=0, speed_sp=100)
         return posCols
 
     def scanHandler(self):
