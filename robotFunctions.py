@@ -113,8 +113,25 @@ class robotHandler:
             self.circleNavigate(nonPass)
         return nonPass
 
-    def circleNavigate(self, positions):
-        pass
+    def circleNavigate(self):
+        startRot = self.getOrientation()
+        self.drive(-2)
+        wheelArm = 40 #fix pos of arm guess 40
+        dir = ''
+        if self.ar.position > 0: #on left
+            dir = 'right'
+            self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
+        else:
+            dir = 'left'
+            self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
+        self.drive(0, 10, dir)
+
+        while abs(self.getOrientation()-startRot)<90:
+            currCol = get_closest_color(self.returnColors())
+            if currCol == 'blue':
+                self.drive(4, speed=100)
+            if currCol == 'white':
+                self.drive(0, 3, dir, 100)
 
     def turnAroundSensor(self, dirOverride=''):
         motorPos = self.ar.position
@@ -132,7 +149,7 @@ class robotHandler:
             turnSide = dirOverride
 
         self.drive(driveComp, travel, turnSide, 100)
-        self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=100)
+        self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
 
     def getIntoPos(self, final=False):
         self.drive(20, 0, '', 200, True)
