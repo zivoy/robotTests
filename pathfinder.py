@@ -24,8 +24,21 @@ while True:
         break
 
 typeIn, feed = robot.scan_handler()
-while typeIn == 'clear':
-    robot.drive(drive_dist, speed=250)
-    typeIn, feed = robot.scan_handler()
+def driveFor():
+    while typeIn == 'clear':
+        robot.drive(drive_dist, speed=250)
+        typeIn, feed = robot.scan_handler()
 
+while typeIn!= 'green'
+    driveFor()
+    typeIn, feed = robot.scan_handler()
+    if typeIn == 'circle':
+        pos_of_err = feed[0][0]
+        scan_ran = range((pos_of_err-1)*10, (pos_of_err+1)*10, 5)
+        blues = []
+        for i in scan_ran:
+            robot.ar.run_to_abs_pos(position_sp=i, speed_sp=150)
+            sleep(.01)
+            blues.append(robotFunctions.get_closest_color(robot.return_colors()))
+        robot.circle_navigate(Dir.RIGHT)
 

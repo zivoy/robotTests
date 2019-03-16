@@ -1,1 +1,1 @@
-python3 navigate.py
+python3 pathfinder.py

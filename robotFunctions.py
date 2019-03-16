@@ -115,7 +115,7 @@ class RobotHandler:
     def scan(self, turn_speed=300):
         pos_cols = []
         ret_end = True
-        for l in range(-8, 9):
+        for l in range(-4, 5):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
             #self.ar.wait_while('running', timeout=30)
             sleep(.03)
