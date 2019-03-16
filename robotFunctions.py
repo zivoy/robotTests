@@ -1,6 +1,6 @@
 from ev3dev import ev3
 from math import pi
-from time import sleep
+#from time import sleep
 from enum import Enum
 
 wheel_diameter = 5.6
@@ -113,7 +113,8 @@ class RobotHandler:
         ret_end = True
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
-            sleep(.01+10/turn_speed)
+            self.ar.wait_while('running', timeout=30)
+            #sleep(.01+10/turn_speed)
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
             if col_ret == Color.RED or col_ret == Color.BLUE:
@@ -122,6 +123,7 @@ class RobotHandler:
         if ret_end:
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
+            self.ar.wait_while('running', timeout=10)
         return pos_cols
 
     def scan_handler(self):
@@ -146,7 +148,7 @@ class RobotHandler:
         if non_pass:
             return 'circle', non_pass
         elif greens:
-            return Color.GREEN, greens
+            return 'green', greens
         else:
             return 'clear', color_ran
 
@@ -215,12 +217,6 @@ class RobotHandler:
         self.ar.run_to_abs_pos(position_sp=dir_override.get_arm(), speed_sp=50)
         print(~dir_override, dir_override.get_arm(), drive_compensate)
         self.drive(drive_compensate, travel_degrees, ~dir_override, 100, wwr=True)
-
-    def get_into_pos(self, to_edge, final=False):
-        self.drive(to_edge - 7.0, 0, '', 200, True)
-        curr_or = self.get_orientation()
-        end_pos = 0 if final else 180
-        self.drive(0, end_pos - curr_or, Direction.RIGHT, 180, True)
 
     def to_wall(self):
         return self.us.value() / 10.0
