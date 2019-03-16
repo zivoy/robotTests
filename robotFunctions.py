@@ -140,7 +140,7 @@ class RobotHandler:
             self.drive(2,5,dir_override, 50, True)
         #
 
-        while abs(self.get_orientation()) < 90:
+        while abs(self.get_orientation()) < 90:  # TODO: reset ddirection to 0 when going back
             curr_col = get_closest_color(self.return_colors())
             if curr_col == 'blue':
                 self.drive(4, speed=100, wwr=True)
