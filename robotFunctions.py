@@ -37,6 +37,8 @@ class robotHandler:
         self.gy = ev3.GyroSensor()
         self.gy.mode='GYRO-CAL'
         self.gy.mode='GYRO-ANG'
+        self.us = ev3.UltrasonicSensor()
+        self.us.mode='US-DIST-CM'
 
     def getOrientation(self):
         return self.gy.value()
@@ -122,19 +124,21 @@ class robotHandler:
         else:
             return 'clear', colorRan
 
-    def circleNavigate(self):
+    def circleNavigate(self, dirOverried=''):
         startRot = self.getOrientation()
         #self.drive(-2)
         #wheelArm = 85 #fix pos of arm guess 40
         #dire = ''
-        if self.ar.position > 0: #on left
+        if dirOverried!='':
+            dire=dirOverried
+        elif self.ar.position > 0: #on left
             dire = 'right'
             #self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
         else:
             dire = 'left'
             #self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
         #self.drive(0, 10, dire)
-        self.turnAroundSensor()
+        self.turnAroundSensor(dirOverried)
 
         while get_closest_color(self.returnColors())!= 'blue':
             self.drive(2, speed=50)
@@ -147,17 +151,19 @@ class robotHandler:
                 self.drive(0, 3, dire, 100, True)
 
         self.stopRunning()
+        finalDist = self.toWall()
         self.drive(-6, 0, '', 200, True)
         breakDir = 'left' if dire == 'right' else 'right'
         self.drive(0, 90, breakDir, 150, True)
+        return finalDist
 
     def turnAroundSensor(self, dir_override=''):
         sensor_pos = self.ar.position
-        print(sensor_pos)
-        travel_degrees = 90.0-abs(sensor_pos)*.85#multiplyer
-        print(travel_degrees)
+#        print(sensor_pos)
+#        print(travel_degrees)
+        travel_degrees = 90.0 - abs(sensor_pos) * .85  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
-        print(drive_compensate)
+#        print(drive_compensate)
 
         if sensor_pos < 0:
             direct = ('left', -90)
@@ -179,3 +185,6 @@ class robotHandler:
         self.drive(0, endPos-currOr, 'right', 180, True)
         runAgain = not final
         return runAgain
+
+    def toWall(self):
+        return self.us.value()/10.0
