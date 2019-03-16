@@ -18,7 +18,7 @@ robot = robotFunctions.RobotHandler('outA', 'outD', 'outB')
 robot.ar.position = 0
 
 def all_green():
-    process = robot.scan()
+    process = robot.scan(200)
     gCount = 0
     for i, j in process:
         if i == 'green':
@@ -30,6 +30,8 @@ def all_green():
         Sound.speak("good to go, all green").wait()
         Leds.all_off()
         return True
+    else:
+        return False
 
 
 def go_rover():
@@ -63,10 +65,16 @@ def go_rover():
                 break
         '''
 
-
+all_green()#needdsd handeling?
 go_rover()
 toEnd = robot.to_wall()
 robot.get_into_pos(toEnd)
+while not all_green():
+    distance_to_walls = []
+    for i in range(3):
+        robot.drive(0, 90, 'right', 100)
+        distance_to_walls.append(robot.to_wall())
+
 sleep(5)
 posOfCir = [flip_place(i) for i in posOfCir]
 go_rover()

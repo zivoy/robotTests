@@ -87,7 +87,7 @@ class RobotHandler:
         ret_end = True
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
-            sleep(.04)
+            sleep(.01+10/turn_speed)
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
             if col_ret == 'red' or col_ret == 'blue':
