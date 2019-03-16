@@ -38,11 +38,13 @@ def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
 
 
+
+
 def get_closest_color(color_measure):
-    colors = {Color.RED: [225, 50, 50],
-              Color.GREEN: [48, 155, 40],
-              Color.BLUE: [50, 50, 85],
-              Color.GREY: [220, 220, 220],
+    colors = {Color.RED: [251, 31, 25],
+              Color.GREEN: [81, 209, 70],
+              Color.BLUE: [53, 61, 196],
+              Color.GREY: [228, 230, 235],
               Color.BLACK: [20, 20, 20],
               Color.WHITE: [255, 255, 255]}
     distances = [(dist(color, color_measure), name) for name, color in colors.items()]
@@ -144,9 +146,10 @@ class RobotHandler:
                 # return get_closest_color(col)
                 if col == Color.GREEN:
                     greens.append((pos, col))
-                else:
+                else: # Red Blue Or Black
+
                     self.stop_running()
-                    non_pass.append(pos)
+                    non_pass.append((pos, col))
                     break
         if non_pass:
             return 'circle', non_pass
