@@ -145,19 +145,21 @@ class RobotHandler:
             curr_col = get_closest_color(self.return_colors())
             if curr_col == 'blue':
                 print("blue")
-
                 self.drive(4, speed=100, wwr=True)
             elif curr_col in ('white', 'grey'):
                 print("wg")
-                self.drive(0, 3, dir_override, speed=100, wwr=True)
+                self.drive(0.5, 3, dir_override, speed=100, wwr=True)
+            elif curr_col == "red":
+                self.drive(-10, wwr=True)
+                self.drive(5, -10, dir_override, wwr=True)
             else:
                 print(curr_col, 'curr color')
 
         self.stop_running()
         final_dist = self.to_wall()
-        self.drive(-6, 0, '', 200, True)
-        break_dir = 'left' if dir_override == 'right' else 'right'
-        self.drive(0, 90, break_dir, 150, True)
+        self.drive(-15, 0, '', 200, True)
+        #break_dir = 'left' if dir_override == 'right' else 'right'
+        self.drive(10, -90, dir_override, 150, True)
         return final_dist
 
     def turn_around_sensor(self, dir_override):
