@@ -5,47 +5,51 @@ from time import sleep
 posOfCir = ['right', 'left', 'right', 'left']
 stageLength = 10
 
-def flipPlace(val):
+
+def flip_place(val):
     if val == 'right':
         return 'left'
     else:
         return 'right'
 
 
-robot = robotFunctions.robotHandler('outA', 'outD', 'outB')
+robot = robotFunctions.RobotHandler('outA', 'outD', 'outB')
 
 robot.ar.position = 0
 
 process = robot.scan()
 
 gCount = 0
-for i,j in process:
+for i, j in process:
     if i == 'green':
-        i+=1
+        i += 1
 
 if gCount == len(process):
     Sound.speak("good to go, all green").wait()
 
-#TODO handle first green
-def goRover():
-    drove=0
-    stages=4
-    while stages>0:
-        inputType, inputFeed = robot.scanHandler()
-        if inputType == 'circle':
-            robot.turnAroundSensor()
-            toEdge = robot.circleNavigate() #TODO <--- do something with this
-            drove =0
-            stages-=1
+
+# TODO handle first green
+def go_rover():
+    drove = 0
+    stage_count = 0
+    while stage_count < len(posOfCir):
+
+        input_type, input_feed = robot.scan_handler()
+
+        if input_type == 'circle':
+            robot.turn_around_sensor()
+            to_edge = robot.circle_navigate(posOfCir[stage_count])  # TODO <--- do something with this
+            drove = 0
+            stage_count += 1
             continue
         else:
-            drive_distance=2
+            drive_distance = 2
             robot.drive(drive_distance, 0, '', 100)
-            drove+=drive_distance
+            drove += drive_distance
 
         if drove >= stageLength:
-            drove=0
-            stages-=1
+            drove = 0
+            stage_count += 1
             continue
 
         '''
@@ -56,11 +60,12 @@ def goRover():
                 break
         '''
 
-goRover()
-toEnd = robot.toWall()
-robot.getIntoPos(toEnd)
+
+go_rover()
+toEnd = robot.to_wall()
+robot.get_into_pos(toEnd)
 sleep(5)
-posOfCir = [flipPlace(i) for i in posOfCir]
-goRover()
-toEnd = robot.toWall()
-robot.getIntoPos(toEnd, True)
+posOfCir = [flip_place(i) for i in posOfCir]
+go_rover()
+toEnd = robot.to_wall()
+robot.get_into_pos(toEnd, True)

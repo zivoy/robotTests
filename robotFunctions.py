@@ -5,16 +5,15 @@ from time import sleep
 wheel_diameter = 5.6
 robot_width = 11.6
 
-
 wheel_circum = pi * wheel_diameter
 robot_turn_circle = pi * robot_width
 
+
 def dist(list1, list2):
-    return sum([(vi-vj)**2.0 for vi, vj in zip(list1, list2)])
+    return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
 
 
 def get_closest_color(color_measure):
-
     colors = {'red': [225, 50, 50],
               'green': [48, 155, 40],
               'blue': [50, 50, 85],
@@ -27,20 +26,20 @@ def get_closest_color(color_measure):
     return color
 
 
-class robotHandler:
+class RobotHandler:
     def __init__(self, m1, m2, ar):
         self.m1 = ev3.LargeMotor(m1)
         self.m2 = ev3.LargeMotor(m2)
         self.ar = ev3.MediumMotor(ar)
         self.cl = ev3.ColorSensor()
-        self.cl.mode='RGB-RAW'
+        self.cl.mode = 'RGB-RAW'
         self.gy = ev3.GyroSensor()
-        self.gy.mode='GYRO-CAL'
-        self.gy.mode='GYRO-ANG'
+        self.gy.mode = 'GYRO-CAL'
+        self.gy.mode = 'GYRO-ANG'
         self.us = ev3.UltrasonicSensor()
-        self.us.mode='US-DIST-CM'
+        self.us.mode = 'US-DIST-CM'
 
-    def getOrientation(self):
+    def get_orientation(self):
         return self.gy.value()
 
     def drive(self, forward, turn_deg=0, turn_dir='', speed=200, wwr=False):
@@ -49,140 +48,149 @@ class robotHandler:
 
         rotation_deg = wheel_travel_distance / wheel_circum * 360.0
 
-        moveRot = float(forward) / wheel_circum * 360.0
+        move_rot = float(forward) / wheel_circum * 360.0
 
         if turn_dir == 'right':
-            rRot = rotation_deg + moveRot
-            lRot = -rotation_deg + moveRot
-            lSpeed = speed * lRot / rRot
-            rSpeed = speed
+            r_rot = rotation_deg + move_rot
+            l_rot = -rotation_deg + move_rot
+            l_speed = speed * l_rot / r_rot
+            r_speed = speed
         elif turn_dir == 'left':
-            rRot = -rotation_deg + moveRot
-            lRot = rotation_deg + moveRot
-            lSpeed = speed
-            rSpeed = speed * rRot / lRot
+            r_rot = -rotation_deg + move_rot
+            l_rot = rotation_deg + move_rot
+            l_speed = speed
+            r_speed = speed * r_rot / l_rot
         else:
-            rRot = moveRot
-            lRot = moveRot
-            lSpeed = speed
-            rSpeed = speed
+            r_rot = move_rot
+            l_rot = move_rot
+            l_speed = speed
+            r_speed = speed
 
-        self.m1.run_to_rel_pos(position_sp=rRot, speed_sp=rSpeed)
-        self.m2.run_to_rel_pos(position_sp=lRot, speed_sp=lSpeed)
+        self.m1.run_to_rel_pos(position_sp=r_rot, speed_sp=r_speed)
+        self.m2.run_to_rel_pos(position_sp=l_rot, speed_sp=l_speed)
 
         comp = 50.0
         if wwr:
-            self.m1.wait_while('running', timeout=rRot/rSpeed*1000.0 - comp)
-            self.m2.wait_while('running', timeout=lRot/lSpeed*1000.0 - comp)
+            self.m1.wait_while('running', timeout=r_rot / r_speed * 1000.0 - comp)
+            self.m2.wait_while('running', timeout=l_rot / l_speed * 1000.0 - comp)
 
-    def stopRunning(self):
+    def stop_running(self):
         self.m1.stop(stop_action="brake")
         self.m2.stop(stop_action="brake")
 
-    def returnColors(self):
+    def return_colors(self):
         scale = [345.0, 324.0, 214.0]
         return [255.0 / s * self.cl.value(i) for i, s in enumerate(scale)]
 
     def scan(self, turn_speed=300):
-        posCols = []
-        retEnd = True
+        pos_cols = []
+        ret_end = True
         for l in range(-8, 9):
-            self.ar.run_to_abs_pos(position_sp=l*10, speed_sp=turn_speed)
+            self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
             sleep(.04)
-            colRet = get_closest_color((self.returnColors()))
-            posCols.append(colRet, l)
-            if colRet == 'red' or colRet == 'blue':
-                retEnd = False
+            col_ret = get_closest_color((self.return_colors()))
+            pos_cols.append((col_ret, l))
+            if col_ret == 'red' or col_ret == 'blue':
+                ret_end = False
                 break
-        if retEnd:
+        if ret_end:
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=900)
             self.ar.run_to_abs_pos(position_sp=-80, speed_sp=100)
-        return posCols
+        return pos_cols
 
-    def scanHandler(self):
-        colorRan = self.scan()
-        nonPass = []
+    def scan_handler(self):
+        color_ran = self.scan()
+        non_pass = []
         greens = []
-        for col, pos in colorRan:
+
+        for col, pos in color_ran:
             if col != 'white' or col != 'gray':
                 '''if col == 'green' and pos == 0:
-                    self.getIntoPos()
+                    self.get_into_pos()
                     return
                 else:'''
-                    #return get_closest_color(col)
+                # return get_closest_color(col)
                 if col == 'green':
-                    #TODO: color handler
+                    # TODO: color handler
                     greens.append((pos, col))
                 else:
-                    self.stopRunning()
-                    nonPass.append(pos)
+                    self.stop_running()
+                    non_pass.append(pos)
                     break
-        if nonPass != []:
-            return 'circle', nonPass
-        elif greens!=[]:
+        if non_pass:
+            return 'circle', non_pass
+        elif greens:
             return 'green', greens
         else:
-            return 'clear', colorRan
+            return 'clear', color_ran
 
-    def circleNavigate(self, dirOverried=''):
-        startRot = self.getOrientation()
-        #self.drive(-2)
-        #wheelArm = 85 #fix pos of arm guess 40
-        #dire = ''
-        if dirOverried!='':
-            dire=dirOverried
-        elif self.ar.position > 0: #on left
+    def circle_navigate(self, dir_override=''):
+        start_rot = self.get_orientation()
+        # self.drive(-2)
+        # wheelArm = 85 #fix pos of arm guess 40
+        # dire = ''
+        if dir_override != '':
+            dire = dir_override
+        elif self.ar.position > 0:  # on left
             dire = 'right'
-            #self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
+            # self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
         else:
             dire = 'left'
-            #self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
-        #self.drive(0, 10, dire)
-        self.turnAroundSensor(dirOverried)
+            # self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
+        # self.drive(0, 10, dire)
+        self.turn_around_sensor(dir_override)
 
-        while get_closest_color(self.returnColors())!= 'blue':
+        while get_closest_color(self.return_colors()) != 'blue':
             self.drive(2, speed=50)
 
-        while abs(self.getOrientation()-startRot)<90:
-            currCol = get_closest_color(self.returnColors())
-            if currCol == 'blue':
+        while abs(self.get_orientation() - start_rot) < 90:
+            curr_col = get_closest_color(self.return_colors())
+            if curr_col == 'blue':
                 self.drive(4, speed=100, wwr=True)
-            if currCol == 'white' or currCol == 'gray':
+            if curr_col == 'white' or curr_col == 'gray':
                 self.drive(0, 3, dire, 100, True)
 
-        self.stopRunning()
-        finalDist = self.toWall()
+        self.stop_running()
+        final_dist = self.to_wall()
         self.drive(-6, 0, '', 200, True)
-        breakDir = 'left' if dire == 'right' else 'right'
-        self.drive(0, 90, breakDir, 150, True)
-        return finalDist
+        break_dir = 'left' if dire == 'right' else 'right'
+        self.drive(0, 90, break_dir, 150, True)
+        return final_dist
 
-    def turnAroundSensor(self, dir_override=''):
+    def turn_around_sensor(self, dir_override):
+
         sensor_pos = self.ar.position
-#        print(sensor_pos)
-#        print(travel_degrees)
+        #        print(sensor_pos)
+        #        print(travel_degrees)
         travel_degrees = 90.0 - abs(sensor_pos) * .85  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
-#        print(drive_compensate)
+        #        print(drive_compensate)
 
+        '''
         if sensor_pos < 0:
             direct = ('left', -90)
         elif sensor_pos > 0:
             direct = ('right', 90)
+        elif sensor_pos == 0:
+                
 
         if dir_override == '':
             turn_side = direct[0]
         else:
-            turn_side = dir_override
+            turn_side = dir_override'''
+        if dir_override == 'right':
+            direct = ('left', -90)
+        else:
+            direct = ('right', 90)
 
-        self.drive(drive_compensate, travel_degrees, turn_side, 100)
+        self.drive(drive_compensate, travel_degrees, direct[0], 100)
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
 
-    def getIntoPos(self, toEdge, final=False):
-        self.drive(toEdge-7.0, 0, '', 200, True)
-        currOr = self.getOrientation()
-        endPos = 0 if final else 180
-        self.drive(0, endPos-currOr, 'right', 180, True)
+    def get_into_pos(self, to_edge, final=False):
+        self.drive(to_edge - 7.0, 0, '', 200, True)
+        curr_or = self.get_orientation()
+        end_pos = 0 if final else 180
+        self.drive(0, end_pos - curr_or, 'right', 180, True)
 
-    def toWall(self):
-        return self.us.value()/10.0
+    def to_wall(self):
+        return self.us.value() / 10.0
