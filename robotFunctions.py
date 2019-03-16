@@ -133,7 +133,7 @@ class RobotHandler:
 
             # self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
         # self.drive(0, 10, dire)
-        print("ddir_over, ddire: ", dir_override, dire)
+        print("ddir_over, ddire: ", dir_override)
         self.turn_around_sensor(dir_override)
 
         while get_closest_color(self.return_colors()) != 'blue':
