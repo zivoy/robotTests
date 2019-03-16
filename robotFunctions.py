@@ -105,7 +105,7 @@ class RobotHandler:
         greens = []
 
         for col, pos in color_ran:
-            if col != 'white' or col != 'gray':
+            if col != 'white' and col != 'grey':
                 '''if col == 'green' and pos == 0:
                     self.get_into_pos()
                     return
@@ -147,7 +147,7 @@ class RobotHandler:
                 print("blue")
 
                 self.drive(4, speed=100, wwr=True)
-            elif curr_col in ('white', 'gray'):
+            elif curr_col in ('white', 'grey'):
                 print("wg")
                 self.drive(0, 3, dir_override, speed=100, wwr=True)
             else:

@@ -59,7 +59,7 @@ def go_rover():
 
         '''
         for i in inputFeed:
-            if i == 'gray':
+            if i == 'grey':
                 stages-=1
                 drove=0
                 break
