@@ -207,6 +207,7 @@ class RobotHandler:
         direct = (~dir_override, -90 if dir_override == Direction.RIGHT else 90)
 
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
+        print(direct, drive_compensate)
         self.drive(drive_compensate, travel_degrees, direct[0], 100, wwr=True)
 
     def get_into_pos(self, to_edge, final=False):
