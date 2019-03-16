@@ -126,36 +126,31 @@ class RobotHandler:
             return 'clear', color_ran
 
     def circle_navigate(self, dir_override=''):
-        start_rot = self.get_orientation()
+
         # self.drive(-2)
         # wheelArm = 85 #fix pos of arm guess 40
         # dire = ''
-        if dir_override != '':
-            dire = dir_override
-        elif self.ar.position > 0:  # on left
-            dire = 'right'
-            # self.ar.run_to_abs_pos(position_sp=wheelArm, speed_sp=100)
-        else:
-            dire = 'left'
+
             # self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
         # self.drive(0, 10, dire)
-
+        print("ddir_over, ddire: ", dir_override, dire)
         self.turn_around_sensor(dir_override)
 
         while get_closest_color(self.return_colors()) != 'blue':
             self.drive(2,5,dir_override, 50, True)
+        #
 
-        while abs(self.get_orientation() - start_rot) < 90:
+        while abs(self.get_orientation()) < 90:
             curr_col = get_closest_color(self.return_colors())
             if curr_col == 'blue':
                 self.drive(4, speed=100, wwr=True)
-            if curr_col == 'white' or curr_col == 'gray':
-                self.drive(0, 3, dire, 100, True)
+            elif curr_col in ('white', 'gray'):
+                self.drive(0, 3, dir_override, speed=100, wwr=True)
 
         self.stop_running()
         final_dist = self.to_wall()
         self.drive(-6, 0, '', 200, True)
-        break_dir = 'left' if dire == 'right' else 'right'
+        break_dir = 'left' if dir_override == 'right' else 'right'
         self.drive(0, 90, break_dir, 150, True)
         return final_dist
 
