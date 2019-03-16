@@ -32,7 +32,6 @@ def all_green():
         return True
 
 
-# TODO: handle first green
 def go_rover():
     drove = -green_area
     stage_count = 0
