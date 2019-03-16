@@ -163,6 +163,8 @@ class RobotHandler:
     def turn_around_sensor(self, dir_override):
 
         sensor_pos = self.ar.position
+        if abs(sensor_pos) == 90 : 
+            return
         #        print(sensor_pos)
 
         #        print(travel_degrees)
@@ -176,7 +178,6 @@ class RobotHandler:
         elif sensor_pos > 0:
             direct = ('right', 90)
         elif sensor_pos == 0:
-                
 
         if dir_override == '':
             turn_side = direct[0]
