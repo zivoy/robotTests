@@ -37,7 +37,7 @@ def go_rover():
     stage_count = 0
     while stage_count < len(posOfCir):
         input_type, input_feed = robot.scan_handler()
-
+        print(input_type, input_feed)
         if input_type == 'circle':
             to_edge = robot.circle_navigate(posOfCir[stage_count])  # TODO: <--- do something with this
             drove = 0
@@ -63,6 +63,7 @@ def go_rover():
 
 
 def park():
+    robot.drive(0,180,Dir.RIGHT)
     front_wall = robot.to_wall() - robot_to_front
     keep_gap = 5
     robot.drive(front_wall - keep_gap, speed=150)

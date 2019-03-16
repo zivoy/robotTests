@@ -1,6 +1,6 @@
 from ev3dev import ev3
 from math import pi
-
+from time import sleep
 from enum import Enum
 
 wheel_diameter = 5.6
@@ -24,12 +24,12 @@ class Direction(Enum):
         LEFT = 'left'
 
         def __invert__(self):
-            if self.value == Direction.LEFT:
+            if self.value == Direction.LEFT.value:
                 return Direction.RIGHT
             return Direction.LEFT
 
         def get_arm(self):
-            if self.value == Direction.RIGHT:
+            if self.value == Direction.RIGHT.value:
                 return -90
             return 90
 
@@ -113,7 +113,8 @@ class RobotHandler:
         ret_end = True
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
-            self.ar.wait_while('running', timeout=30)
+            #self.ar.wait_while('running', timeout=30)
+            sleep(.03)
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
             if col_ret == Color.RED or col_ret == Color.BLUE:
@@ -166,7 +167,7 @@ class RobotHandler:
             self.drive(1, 2, dir_override, 50, True)
         #
         dir_mult = 1 if dir_override == Direction.RIGHT else -1
-        while dir_mult * self.get_orientation() < 89:
+        while dir_mult * self.get_orientation() < 8 :
             curr_col = get_closest_color(self.return_colors())
             if curr_col == Color.BLUE:
                 print("blue")
@@ -180,12 +181,14 @@ class RobotHandler:
             else:
                 self.drive(-1, wwr=True)
                 print(curr_col, 'curr color')
-
+        '''
         self.stop_running()
         final_dist = self.to_wall()
         self.drive(-9, 0, '', 200, True)
-        self.drive(5, 90, ~dir_override, 150, True)
-        return final_dist
+        self.drive(5, 90, ~dir_override, 150, True)'''
+        self.drive(10)
+        self.drive(0,0-self.get_orientation(),dir_override)
+  #      return final_dist
 
     def turn_around_sensor(self, dir_override):
 
@@ -194,7 +197,7 @@ class RobotHandler:
             return
         print(sensor_pos)
 
-        travel_degrees = (90.0 - abs(sensor_pos)) ** 1.1 / 141 * .75  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .75  # multiplyer
         print(travel_degrees)
 
         drive_compensate = robot_turn_circle * travel_degrees / 360.0

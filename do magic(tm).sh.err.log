@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "navigate.py", line 92, in <module>
+    go_rover()
+  File "navigate.py", line 42, in go_rover
+    to_edge = robot.circle_navigate(posOfCir[stage_count])  # TODO: <--- do something with this
+  File "/home/robot/robotTests/robotFunctions.py", line 189, in circle_navigate
+    self.drive(0,0-self.get_orientation(),dir_override)
+  File "/home/robot/robotTests/robotFunctions.py", line 96, in drive
+    self.m2.run_to_rel_pos(position_sp=l_rot, speed_sp=l_speed)
+  File "/usr/lib/python3/dist-packages/ev3dev/core.py", line 817, in run_to_rel_pos
+    setattr(self, key, kwargs[key])
+  File "/usr/lib/python3/dist-packages/ev3dev/core.py", line 589, in speed_sp
+    self._speed_sp = self.set_attr_int(self._speed_sp, 'speed_sp', value)
+  File "/usr/lib/python3/dist-packages/ev3dev/core.py", line 223, in set_attr_int
+    return self._set_attribute(attribute, name, str(int(value)))
+  File "/usr/lib/python3/dist-packages/ev3dev/core.py", line 211, in _set_attribute
+    attribute.write(value.encode())
+OSError: [Errno 22] Invalid argument
