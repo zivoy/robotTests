@@ -11,13 +11,20 @@ robot_turn_circle = pi * robot_width
 
 
 class Color(Enum):
-    RED = 1
-    GREEN = 2
-    BLUE = 3
-    GREY = 4
-    BLACK = 5
-    WHITE = 6
-    
+    RED = 'red'
+    GREEN = 'green'
+    BLUE = 'blue'
+    GREY = 'grey'
+    BLACK = 'black'
+    WHITE = 'white'
+
+
+def invert_dir(direction):
+    if direction == 'left':
+        return 'right'
+    if direction == 'right':
+        return 'left'
+    return ''
 
 def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
@@ -135,7 +142,7 @@ class RobotHandler:
         else:
             return 'clear', color_ran
 
-    def circle_navigate(self, dir_override=''):
+    def circle_navigate(self, dir_override):
 
         # self.drive(-2)
         # wheelArm = 85 #fix pos of arm guess 40
@@ -150,8 +157,8 @@ class RobotHandler:
             print("i'm not blue")
             self.drive(2, 5, dir_override, 50, True)
         #
-
-        while abs(self.get_orientation()) < 90:  # TODO: reset ddirection to 0 when going back
+        dir_mult = 1 if dir_override == 'right' else -1
+        while dir_mult * self.get_orientation() < 89:  # TODO: reset direction to 0 when going back
             curr_col = get_closest_color(self.return_colors())
             if curr_col == Color.BLUE:
                 print("blue")
@@ -168,9 +175,9 @@ class RobotHandler:
 
         self.stop_running()
         final_dist = self.to_wall()
-        self.drive(-15, 0, '', 200, True)
+        self.drive(-9, 0, '', 200, True)
         #break_dir = 'left' if dir_override == 'right' else 'right'
-        self.drive(10, -90, dir_override, 150, True)
+        self.drive(5, 90, invert_dir(dir_override), 150, True)
         return final_dist
 
     def turn_around_sensor(self, dir_override):
