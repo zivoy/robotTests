@@ -151,6 +151,8 @@ class RobotHandler:
             elif curr_col in ('white', 'gray'):
                 print("wg")
                 self.drive(0, 3, dir_override, speed=100, wwr=True)
+            else:
+                print(curr_col, 'curr color')
 
         self.stop_running()
         final_dist = self.to_wall()
