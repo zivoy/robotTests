@@ -1,6 +1,7 @@
 from ev3dev import ev3
 from math import pi
 from time import sleep
+from enum import Enum
 
 wheel_diameter = 5.6
 robot_width = 11.6
@@ -9,17 +10,26 @@ wheel_circum = pi * wheel_diameter
 robot_turn_circle = pi * robot_width
 
 
+class Color(Enum):
+    RED = 1
+    GREEN = 2
+    BLUE = 3
+    GREY = 4
+    BLACK = 5
+    WHITE = 6
+    
+
 def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
 
 
 def get_closest_color(color_measure):
-    colors = {'red': [225, 50, 50],
-              'green': [48, 155, 40],
-              'blue': [50, 50, 85],
-              'grey': [220, 220, 220],
-              'black': [20, 20, 20],
-              'white': [255, 255, 255]}
+    colors = {Color.RED: [225, 50, 50],
+              Color.GREEN: [48, 155, 40],
+              Color.BLUE: [50, 50, 85],
+              Color.GREY: [220, 220, 220],
+              Color.BLACK: [20, 20, 20],
+              Color.WHITE: [255, 255, 255]}
     distances = [(dist(color, color_measure), name) for name, color in colors.items()]
     color = min(distances)[1]
     #print(color)
@@ -91,7 +101,7 @@ class RobotHandler:
             sleep(.01+10/turn_speed)
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
-            if col_ret == 'red' or col_ret == 'blue':
+            if col_ret == Color.RED or col_ret == Color.BLUE:
                 ret_end = False
                 break
         if ret_end:
@@ -105,13 +115,13 @@ class RobotHandler:
         greens = []
 
         for col, pos in color_ran:
-            if col != 'white' and col != 'grey':
-                '''if col == 'green' and pos == 0:
+            if col not in (Color.WHITE, Color.GREY):
+                '''if col == Color.GREEN and pos == 0:
                     self.get_into_pos()
                     return
                 else:'''
                 # return get_closest_color(col)
-                if col == 'green':
+                if col == Color.GREEN:
                     # TODO: color handler
                     greens.append((pos, col))
                 else:
@@ -121,7 +131,7 @@ class RobotHandler:
         if non_pass:
             return 'circle', non_pass
         elif greens:
-            return 'green', greens
+            return Color.GREEN, greens
         else:
             return 'clear', color_ran
 
@@ -136,23 +146,24 @@ class RobotHandler:
         print("ddir_over, ddire: ", dir_override)
         self.turn_around_sensor(dir_override)
         print("turned d_ arond")
-        while get_closest_color(self.return_colors()) != 'blue':
+        while get_closest_color(self.return_colors()) != Color.BLUE:
             print("i'm not blue")
             self.drive(2, 5, dir_override, 50, True)
         #
 
         while abs(self.get_orientation()) < 90:  # TODO: reset ddirection to 0 when going back
             curr_col = get_closest_color(self.return_colors())
-            if curr_col == 'blue':
+            if curr_col == Color.BLUE:
                 print("blue")
                 self.drive(4, speed=100, wwr=True)
-            elif curr_col in ('white', 'grey'):
+            elif curr_col in (Color.WHITE, Color.GREY):
                 print("wg")
                 self.drive(0.5, 3, dir_override, speed=100, wwr=True)
-            elif curr_col == "red":
+            elif curr_col == Color.RED:
                 self.drive(-10, wwr=True)
                 self.drive(5, -10, dir_override, wwr=True)
             else:
+                self.drive(-1, wwr=True)
                 print(curr_col, 'curr color')
 
         self.stop_running()

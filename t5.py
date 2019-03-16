@@ -19,7 +19,7 @@ while True:
     col = robotFunctions.get_closest_color([cl.value(i) for i in range(3)])
     if col == 'white':
         move.drive(9.5, 0, '', speed)
-    elif col == 'blue':
+    elif col == robotFunctions.Color.BLUE:
         break
     else:
         Sound.speak('error').wait()
