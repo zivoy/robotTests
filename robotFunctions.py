@@ -178,13 +178,11 @@ class robotHandler:
         self.drive(drive_compensate, travel_degrees, turn_side, 100)
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
 
-    def getIntoPos(self, final=False):
-        self.drive(20, 0, '', 200, True)
+    def getIntoPos(self, toEdge, final=False):
+        self.drive(toEdge-7.0, 0, '', 200, True)
         currOr = self.getOrientation()
         endPos = 0 if final else 180
         self.drive(0, endPos-currOr, 'right', 180, True)
-        runAgain = not final
-        return runAgain
 
     def toWall(self):
         return self.us.value()/10.0
