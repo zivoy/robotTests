@@ -1,6 +1,6 @@
 from ev3dev import ev3
 from math import pi
-#from time import sleep
+
 from enum import Enum
 
 wheel_diameter = 5.6
@@ -114,7 +114,6 @@ class RobotHandler:
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
             self.ar.wait_while('running', timeout=30)
-            #sleep(.01+10/turn_speed)
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
             if col_ret == Color.RED or col_ret == Color.BLUE:
@@ -139,7 +138,6 @@ class RobotHandler:
                 else:'''
                 # return get_closest_color(col)
                 if col == Color.GREEN:
-                    # TODO: color handler
                     greens.append((pos, col))
                 else:
                     self.stop_running()
@@ -168,7 +166,7 @@ class RobotHandler:
             self.drive(1, 2, dir_override, 50, True)
         #
         dir_mult = 1 if dir_override == Direction.RIGHT else -1
-        while dir_mult * self.get_orientation() < 89:  # TODO: reset direction to 0 when going back
+        while dir_mult * self.get_orientation() < 89:
             curr_col = get_closest_color(self.return_colors())
             if curr_col == Color.BLUE:
                 print("blue")

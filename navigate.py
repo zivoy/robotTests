@@ -1,6 +1,6 @@
 import robotFunctions
-import robotFunctions.Color as Color
-import robotFunctions.Direction as Dir
+from robotFunctions import Color
+from robotFunctions import Direction as Dir
 from ev3dev.ev3 import Sound, Leds
 from time import sleep
 
@@ -8,19 +8,21 @@ posOfCir = [Dir.RIGHT, Dir.LEFT, Dir.RIGHT, Dir.LEFT]
 stageLength = [30, 30, 30, 30]
 
 robot_to_front = 4
+green_area = 30
 
 robot = robotFunctions.RobotHandler('outA', 'outD', 'outB')
 
 robot.ar.position = 0
 
+
 def all_green():
     process = robot.scan(200)
-    gCount = 0
+    g_count = 0
     for i, j in process:
         if i == Color.GREEN:
-            gCount += 1
+            g_count += 1
 
-    if gCount == len(process):
+    if g_count == len(process):
         Leds.set_color(Leds.RIGHT, Leds.GREEN)
         Leds.set_color(Leds.LEFT, Leds.GREEN)
         Sound.speak("good to go, all green").wait()
@@ -61,24 +63,28 @@ def go_rover():
 
 
 def park():
-    front_wall = robot.to_wall()-robot_to_front
+    front_wall = robot.to_wall() - robot_to_front
     keep_gap = 5
-    robot.drive(front_wall-keep_gap, speed=150)
+    robot.drive(front_wall - keep_gap, speed=150)
     robot.drive(0, 90, Dir.RIGHT, 150)
-    right_wall = robot.to_wall()-robot_to_front
+    right_wall = robot.to_wall() - robot_to_front
     robot.drive(0, 180, Dir.RIGHT, 150)
     left_wall = robot.to_wall() - robot_to_front
-    leftW = True
+    left_w = True
+
     if right_wall < left_wall:
         robot.drive(0, 180, Dir.LEFT, 150)
-        leftW = False
+        left_w = False
     _, input_feed = robot.scan_handler()
-    while (-8, Color.GREEN) and (8, Color.GREEN) in input_feed:
+
+    while ((-8, Color.GREEN) not in input_feed) and ((8, Color.GREEN) not in input_feed):
         robot.drive(-2, speed=40)
         _, input_feed = robot.scan_handler()
-    turn_dir = Dir.LEFT if leftW else Dir.RIGHT
+
+    turn_dir = Dir.LEFT if left_w else Dir.RIGHT
     orientation = robot.get_orientation()
     robot.drive(0, 180 - orientation, turn_dir, 50)
+    all_green()
 
 
 all_green()
