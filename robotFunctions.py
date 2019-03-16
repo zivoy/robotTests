@@ -165,7 +165,7 @@ class RobotHandler:
                 self.drive(4, speed=100, wwr=True)
             elif curr_col in (Color.WHITE, Color.GREY):
                 print("wg")
-                self.drive(0.5, 3, dir_override, speed=100, wwr=True)
+                self.drive(1, 3, dir_override, speed=100, wwr=True)
             elif curr_col == Color.RED:
                 self.drive(-10, wwr=True)
                 self.drive(5, -10, dir_override, wwr=True)
