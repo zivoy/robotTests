@@ -24,20 +24,18 @@ class Direction(Enum):
         LEFT = 'left'
 
         def __invert__(self):
-            if self.value == Direction.LEFT:
+            if self.value == Direction.LEFT.value:
                 return Direction.RIGHT
             return Direction.LEFT
 
         def get_arm(self):
-            if self.value == Direction.RIGHT:
+            if self.value == Direction.RIGHT.value:
                 return -90
             return 90
 
 
 def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
-
-
 
 
 def get_closest_color(color_measure):
@@ -115,7 +113,7 @@ class RobotHandler:
         ret_end = True
         for l in range(-8, 9):
             self.ar.run_to_abs_pos(position_sp=l * 10, speed_sp=turn_speed)
-            self.ar.wait_while('running', timeout=30)
+            self.ar.wait_while('running', timeout=30)#<--
             col_ret = get_closest_color((self.return_colors()))
             pos_cols.append((col_ret, l))
             if col_ret == Color.RED or col_ret == Color.BLUE:
@@ -166,17 +164,17 @@ class RobotHandler:
         print("turned d_ arond")
         while get_closest_color(self.return_colors()) != Color.BLUE:
             print("i'm not blue")
-            self.drive(1, 2, dir_override, 50, True)
+            self.drive(1, 2, dir_override, 50, True) ## one
         #
         dir_mult = 1 if dir_override == Direction.RIGHT else -1
         while dir_mult * self.get_orientation() < 89:
             curr_col = get_closest_color(self.return_colors())
             if curr_col == Color.BLUE:
                 print("blue")
-                self.drive(4,  speed=100, wwr=True)
+                self.drive(4,  speed=100, wwr=True) ## two
             elif curr_col in (Color.WHITE, Color.GREY):
                 print("wg")
-                self.drive(1, 3, dir_override, speed=100, wwr=True)
+                self.drive(1, 3, dir_override, speed=100, wwr=True)  ## three
             elif curr_col == Color.RED:
                 self.drive(-10, wwr=True)
                 self.drive(5, 10, ~dir_override, wwr=True)
@@ -197,7 +195,7 @@ class RobotHandler:
             return
         print(sensor_pos)
 
-        travel_degrees = (90.0 - abs(sensor_pos)) ** 1.1 / 141 * .75  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .55  # multiplyer
         print(travel_degrees)
 
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
