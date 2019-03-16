@@ -5,14 +5,17 @@ from ev3dev.ev3 import Sound, Leds
 from time import sleep
 
 posOfCir = [Dir.RIGHT, Dir.LEFT, Dir.RIGHT, Dir.LEFT]
-stageLength = [30, 30, 30, 30]
+stageLength = [51, 67, 67, 57]
 
 robot_to_front = 4
-green_area = 30
+green_area = toCn(16)
 
 robot = robotFunctions.RobotHandler('outA', 'outD', 'outB')
 
 robot.ar.position = 0
+
+def toCn(val):
+    return val*2.5
 
 
 def all_green():
@@ -37,7 +40,7 @@ def go_rover():
     stage_count = 0
     while stage_count < len(posOfCir):
         input_type, input_feed = robot.scan_handler()
-
+        print(input_type, input_feed)
         if input_type == 'circle':
             to_edge = robot.circle_navigate(posOfCir[stage_count])  # TODO: <--- do something with this
             drove = 0
@@ -63,17 +66,18 @@ def go_rover():
 
 
 def park():
+    robot.drive(0, 180, Dir.RIGHT, 150)
     front_wall = robot.to_wall() - robot_to_front
     keep_gap = 5
-    robot.drive(front_wall - keep_gap, speed=150)
+    robot.drive(-front_wall + keep_gap, speed=150)
     robot.drive(0, 90, Dir.RIGHT, 150)
-    right_wall = robot.to_wall() - robot_to_front
-    robot.drive(0, 180, Dir.RIGHT, 150)
     left_wall = robot.to_wall() - robot_to_front
+    robot.drive(0, 180, Dir.LEFT, 150)
+    right_wall = robot.to_wall() - robot_to_front
     left_w = True
 
     if right_wall < left_wall:
-        robot.drive(0, 180, Dir.LEFT, 150)
+        robot.drive(0, 180, Dir.RIGHT, 150)
         left_w = False
     _, input_feed = robot.scan_handler()
 
@@ -81,6 +85,7 @@ def park():
         robot.drive(-2, speed=40)
         _, input_feed = robot.scan_handler()
 
+    robot.stop_running()
     turn_dir = Dir.LEFT if left_w else Dir.RIGHT
     orientation = robot.get_orientation()
     robot.drive(0, 180 - orientation, turn_dir, 50)
