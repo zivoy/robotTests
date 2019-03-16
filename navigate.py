@@ -1,4 +1,5 @@
 import robotFunctions
+import robotFunctions.Color as Color
 from ev3dev.ev3 import Sound, Leds
 from time import sleep
 
@@ -21,7 +22,7 @@ def all_green():
     process = robot.scan(200)
     gCount = 0
     for i, j in process:
-        if i == 'green':
+        if i == Color.GREEN:
             gCount += 1
 
     if gCount == len(process):
@@ -59,7 +60,7 @@ def go_rover():
 
         '''
         for i in inputFeed:
-            if i == 'grey':
+            if i == Color.GREY:
                 stages-=1
                 drove=0
                 break
