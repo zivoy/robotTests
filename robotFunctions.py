@@ -28,6 +28,11 @@ class Direction(Enum):
                 return Direction.RIGHT
             return Direction.LEFT
 
+        def get_arm(self):
+            if self.value == Direction.RIGHT:
+                return -90
+            return 90
+
 
 def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
@@ -61,7 +66,7 @@ class RobotHandler:
     def get_orientation(self):
         return self.gy.value()
 
-    def drive(self, forward, turn_deg=0, turn_dir=None, speed=200, wwr=False):
+    def drive(self, forward, turn_deg=0, turn_dir=None, speed=200, wwr=True):
 
         wheel_travel_distance = robot_turn_circle * turn_deg / 360.0
 
@@ -158,7 +163,7 @@ class RobotHandler:
         print("turned d_ arond")
         while get_closest_color(self.return_colors()) != Color.BLUE:
             print("i'm not blue")
-            self.drive(2, 5, dir_override, 50, True)
+            self.drive(1, 2, dir_override, 50, True)
         #
         dir_mult = 1 if dir_override == Direction.RIGHT else -1
         while dir_mult * self.get_orientation() < 89:  # TODO: reset direction to 0 when going back
@@ -189,7 +194,7 @@ class RobotHandler:
             return
         print(sensor_pos)
 
-        travel_degrees = (90.0 - abs(sensor_pos)) * .5  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) ** 1.1 / 141 * .75  # multiplyer
         print(travel_degrees)
 
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
@@ -206,11 +211,10 @@ class RobotHandler:
             turn_side = direct[0]
         else:
             turn_side = dir_override'''
-        direct = (~dir_override, -90 if dir_override == Direction.RIGHT else 90)
 
-        self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
-        print(direct, drive_compensate)
-        self.drive(drive_compensate, travel_degrees, direct[0], 100, wwr=True)
+        self.ar.run_to_abs_pos(position_sp=dir_override.get_arm(), speed_sp=50)
+        print(~dir_override, dir_override.get_arm(), drive_compensate)
+        self.drive(drive_compensate, travel_degrees, ~dir_override, 100, wwr=True)
 
     def get_into_pos(self, to_edge, final=False):
         self.drive(to_edge - 7.0, 0, '', 200, True)
