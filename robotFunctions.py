@@ -26,7 +26,7 @@ class Direction(Enum):
         def __invert__(self):
             if self.value == Direction.LEFT:
                 return Direction.RIGHT
-            return Direction.RIGHT
+            return Direction.LEFT
 
 
 def dist(list1, list2):
@@ -72,26 +72,28 @@ class RobotHandler:
         if turn_dir == Direction.RIGHT:
             r_rot = rotation_deg + move_rot
             l_rot = -rotation_deg + move_rot
-            l_speed = speed * l_rot / r_rot
+            l_speed = speed * l_rot / max(1.0, r_rot)
             r_speed = speed
         elif turn_dir == Direction.LEFT:
             r_rot = -rotation_deg + move_rot
             l_rot = rotation_deg + move_rot
             l_speed = speed
-            r_speed = speed * r_rot / l_rot
+            r_speed = speed * r_rot / max(1.0, l_rot)
         else:
             r_rot = move_rot
             l_rot = move_rot
             l_speed = speed
             r_speed = speed
+        l_speed = max(1, l_speed)
+        r_speed = max(1, r_speed)
 
         self.m1.run_to_rel_pos(position_sp=r_rot, speed_sp=r_speed)
         self.m2.run_to_rel_pos(position_sp=l_rot, speed_sp=l_speed)
 
         comp = 50.0
         if wwr:
-            self.m1.wait_while('running', timeout=r_rot / r_speed * 1000.0 - comp)
-            self.m2.wait_while('running', timeout=l_rot / l_speed * 1000.0 - comp)
+            self.m1.wait_while('running', timeout=max(1.0, r_rot / r_speed * 1000.0 - comp))
+            self.m2.wait_while('running', timeout=max(1.0, l_rot / l_speed * 1000.0 - comp))
 
     def stop_running(self):
         self.m1.stop(stop_action="brake")
