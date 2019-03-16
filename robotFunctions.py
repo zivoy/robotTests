@@ -187,7 +187,7 @@ class RobotHandler:
             return
         print(sensor_pos)
 
-        travel_degrees = (90.0 - abs(sensor_pos)) * .3  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .5  # multiplyer
         print(travel_degrees)
 
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
@@ -206,8 +206,8 @@ class RobotHandler:
             turn_side = dir_override'''
         direct = (~dir_override, -90 if dir_override == Direction.RIGHT else 90)
 
-        self.drive(drive_compensate, travel_degrees, direct[0], 100)
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
+        self.drive(drive_compensate, travel_degrees, direct[0], 100, wwr=True)
 
     def get_into_pos(self, to_edge, final=False):
         self.drive(to_edge - 7.0, 0, '', 200, True)
