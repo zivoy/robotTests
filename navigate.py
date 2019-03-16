@@ -22,7 +22,7 @@ def all_green():
     gCount = 0
     for i, j in process:
         if i == 'green':
-            i += 1
+            gCount += 1
 
     if gCount == len(process):
         Leds.set_color(Leds.RIGHT, Leds.GREEN)

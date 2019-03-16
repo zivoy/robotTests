@@ -22,7 +22,7 @@ def get_closest_color(color_measure):
               'white': [255, 255, 255]}
     distances = [(dist(color, color_measure), name) for name, color in colors.items()]
     color = min(distances)[1]
-    print(color)
+    #print(color)
     return color
 
 
@@ -68,6 +68,7 @@ class RobotHandler:
 
         self.m1.run_to_rel_pos(position_sp=r_rot, speed_sp=r_speed)
         self.m2.run_to_rel_pos(position_sp=l_rot, speed_sp=l_speed)
+
 
         comp = 50.0
         if wwr:
@@ -142,7 +143,7 @@ class RobotHandler:
         self.turn_around_sensor(dir_override)
 
         while get_closest_color(self.return_colors()) != 'blue':
-            self.drive(2, speed=50)
+            self.drive(2,5,dir_override, 50, True)
 
         while abs(self.get_orientation() - start_rot) < 90:
             curr_col = get_closest_color(self.return_colors())
@@ -162,6 +163,7 @@ class RobotHandler:
 
         sensor_pos = self.ar.position
         #        print(sensor_pos)
+
         #        print(travel_degrees)
         travel_degrees = 90.0 - abs(sensor_pos) * .85  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
