@@ -135,17 +135,23 @@ class RobotHandler:
         # self.drive(0, 10, dire)
         print("ddir_over, ddire: ", dir_override)
         self.turn_around_sensor(dir_override)
-
+        print("turned d_ arond")
         while get_closest_color(self.return_colors()) != 'blue':
-            self.drive(2,5,dir_override, 50, True)
+            print("i'm not blue")
+            self.drive(2, 5, dir_override, 50, True)
         #
 
         while abs(self.get_orientation()) < 90:  # TODO: reset ddirection to 0 when going back
             curr_col = get_closest_color(self.return_colors())
             if curr_col == 'blue':
+                print("blue")
+
                 self.drive(4, speed=100, wwr=True)
             elif curr_col in ('white', 'gray'):
+                print("wg")
                 self.drive(0, 3, dir_override, speed=100, wwr=True)
+            else:
+                print(curr_col, 'curr color')
 
         self.stop_running()
         final_dist = self.to_wall()
@@ -160,7 +166,7 @@ class RobotHandler:
         #        print(sensor_pos)
 
         #        print(travel_degrees)
-        travel_degrees = 90.0 - abs(sensor_pos) * .85  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .3  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         #        print(drive_compensate)
 
