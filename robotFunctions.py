@@ -168,7 +168,7 @@ class RobotHandler:
         #        print(sensor_pos)
 
         #        print(travel_degrees)
-        travel_degrees = (90.0 - abs(sensor_pos)) * .3  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .5  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         #        print(drive_compensate)
 
