@@ -133,10 +133,12 @@ class RobotHandler:
 
             # self.ar.run_to_abs_pos(position_sp=-wheelArm, speed_sp=100)
         # self.drive(0, 10, dire)
-        print("ddir_over, ddire: ", dir_override, dire)
-        self.turn_around_sensor(dir_override)
+        print("ddir_over, ddire: ", dir_override)
 
+        self.turn_around_sensor(dir_override)
+        print()
         while get_closest_color(self.return_colors()) != 'blue':
+            print("i'm blue")
             self.drive(2,5,dir_override, 50, True)
         #
 
@@ -160,7 +162,7 @@ class RobotHandler:
         #        print(sensor_pos)
 
         #        print(travel_degrees)
-        travel_degrees = 90.0 - abs(sensor_pos) * .85  # multiplyer
+        travel_degrees = (90.0 - abs(sensor_pos)) * .3  # multiplyer
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         #        print(drive_compensate)
 
