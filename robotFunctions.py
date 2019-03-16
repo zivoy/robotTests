@@ -136,17 +136,20 @@ class RobotHandler:
         print("ddir_over, ddire: ", dir_override)
 
         self.turn_around_sensor(dir_override)
-        print()
+        print("turned d_ arond")
         while get_closest_color(self.return_colors()) != 'blue':
-            print("i'm blue")
-            self.drive(2,5,dir_override, 50, True)
+            print("i'm not blue")
+            self.drive(2, 5, dir_override, 50, True)
         #
 
         while abs(self.get_orientation()) < 90:  # TODO: reset ddirection to 0 when going back
             curr_col = get_closest_color(self.return_colors())
             if curr_col == 'blue':
+                print("blue")
+
                 self.drive(4, speed=100, wwr=True)
             elif curr_col in ('white', 'gray'):
+                print("wg")
                 self.drive(0, 3, dir_override, speed=100, wwr=True)
 
         self.stop_running()
