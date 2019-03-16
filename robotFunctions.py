@@ -19,12 +19,15 @@ class Color(Enum):
     WHITE = 'white'
 
 
-def invert_dir(direction):
-    if direction == 'left':
-        return 'right'
-    if direction == 'right':
-        return 'left'
-    return ''
+class Direction(Enum):
+        RIGHT = 'right'
+        LEFT = 'left'
+
+        def __invert__(self):
+            if self.value == Direction.LEFT:
+                return Direction.RIGHT
+            return Direction.RIGHT
+
 
 def dist(list1, list2):
     return sum([(vi - vj) ** 2.0 for vi, vj in zip(list1, list2)])
@@ -39,7 +42,6 @@ def get_closest_color(color_measure):
               Color.WHITE: [255, 255, 255]}
     distances = [(dist(color, color_measure), name) for name, color in colors.items()]
     color = min(distances)[1]
-    #print(color)
     return color
 
 
@@ -59,7 +61,7 @@ class RobotHandler:
     def get_orientation(self):
         return self.gy.value()
 
-    def drive(self, forward, turn_deg=0, turn_dir='', speed=200, wwr=False):
+    def drive(self, forward, turn_deg=0, turn_dir=None, speed=200, wwr=False):
 
         wheel_travel_distance = robot_turn_circle * turn_deg / 360.0
 
@@ -67,12 +69,12 @@ class RobotHandler:
 
         move_rot = float(forward) / wheel_circum * 360.0
 
-        if turn_dir == 'right':
+        if turn_dir == Direction.RIGHT:
             r_rot = rotation_deg + move_rot
             l_rot = -rotation_deg + move_rot
             l_speed = speed * l_rot / r_rot
             r_speed = speed
-        elif turn_dir == 'left':
+        elif turn_dir == Direction.LEFT:
             r_rot = -rotation_deg + move_rot
             l_rot = rotation_deg + move_rot
             l_speed = speed
@@ -85,7 +87,6 @@ class RobotHandler:
 
         self.m1.run_to_rel_pos(position_sp=r_rot, speed_sp=r_speed)
         self.m2.run_to_rel_pos(position_sp=l_rot, speed_sp=l_speed)
-
 
         comp = 50.0
         if wwr:
@@ -157,18 +158,18 @@ class RobotHandler:
             print("i'm not blue")
             self.drive(2, 5, dir_override, 50, True)
         #
-        dir_mult = 1 if dir_override == 'right' else -1
+        dir_mult = 1 if dir_override == Direction.RIGHT else -1
         while dir_mult * self.get_orientation() < 89:  # TODO: reset direction to 0 when going back
             curr_col = get_closest_color(self.return_colors())
             if curr_col == Color.BLUE:
                 print("blue")
-                self.drive(4, speed=100, wwr=True)
+                self.drive(4,  speed=100, wwr=True)
             elif curr_col in (Color.WHITE, Color.GREY):
                 print("wg")
                 self.drive(1, 3, dir_override, speed=100, wwr=True)
             elif curr_col == Color.RED:
                 self.drive(-10, wwr=True)
-                self.drive(5, -10, dir_override, wwr=True)
+                self.drive(5, 10, ~dir_override, wwr=True)
             else:
                 self.drive(-1, wwr=True)
                 print(curr_col, 'curr color')
@@ -176,37 +177,34 @@ class RobotHandler:
         self.stop_running()
         final_dist = self.to_wall()
         self.drive(-9, 0, '', 200, True)
-        #break_dir = 'left' if dir_override == 'right' else 'right'
-        self.drive(5, 90, invert_dir(dir_override), 150, True)
+        self.drive(5, 90, ~dir_override, 150, True)
         return final_dist
 
     def turn_around_sensor(self, dir_override):
 
         sensor_pos = self.ar.position
-        if abs(sensor_pos) == 90 : 
+        if abs(sensor_pos) > 88:
             return
-        #        print(sensor_pos)
+        print(sensor_pos)
 
-        #        print(travel_degrees)
         travel_degrees = (90.0 - abs(sensor_pos)) * .5  # multiplyer
+        print(travel_degrees)
+
         drive_compensate = robot_turn_circle * travel_degrees / 360.0
         #        print(drive_compensate)
 
         '''
         if sensor_pos < 0:
-            direct = ('left', -90)
+            direct = (Direction.LEFT, -90)
         elif sensor_pos > 0:
-            direct = ('right', 90)
+            direct = (Direction.RIGHT, 90)
         elif sensor_pos == 0:
 
         if dir_override == '':
             turn_side = direct[0]
         else:
             turn_side = dir_override'''
-        if dir_override == 'right':
-            direct = ('left', -90)
-        else:
-            direct = ('right', 90)
+        direct = (~dir_override, -90 if dir_override == Direction.RIGHT else 90)
 
         self.drive(drive_compensate, travel_degrees, direct[0], 100)
         self.ar.run_to_abs_pos(position_sp=direct[1], speed_sp=50)
@@ -215,7 +213,7 @@ class RobotHandler:
         self.drive(to_edge - 7.0, 0, '', 200, True)
         curr_or = self.get_orientation()
         end_pos = 0 if final else 180
-        self.drive(0, end_pos - curr_or, 'right', 180, True)
+        self.drive(0, end_pos - curr_or, Direction.RIGHT, 180, True)
 
     def to_wall(self):
         return self.us.value() / 10.0
