@@ -189,7 +189,7 @@ class RobotHandler:
                 print(curr_col, 'curr color')
         '''
         self.stop_running()
-        final_dist = self.to_wall()
+        final_dist = self.d_to_wall()
         self.drive(-9, 0, '', 200, True)
         self.drive(5, 90, ~dir_override, 150, True)'''
         self.drive(10)
