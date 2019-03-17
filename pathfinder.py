@@ -8,7 +8,7 @@ robot = robotFunctions.RobotHandler('outA', 'outD', 'outB')
 start_length = 20
 
 robot.drive(start_length)
-robot.ar.run_to_abs_pos(posi)
+robot.ar.run_to_abs_pos(position_sp=0, speed_sp=100)
 
 max_drive = 150
 drove = 0
@@ -24,12 +24,15 @@ while True:
         break
 
 typeIn, feed = robot.scan_handler()
+
+
 def driveFor():
     while typeIn == 'clear':
         robot.drive(drive_dist, speed=250)
         typeIn, feed = robot.scan_handler()
 
-while typeIn!= 'green'
+
+while typeIn != 'green':
     driveFor()
     typeIn, feed = robot.scan_handler()
     if typeIn == 'circle':
